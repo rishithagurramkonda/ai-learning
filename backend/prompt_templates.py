@@ -1,7 +1,9 @@
-def explain_topic_prompt(topic):
+def chat_prompt(user_message: str) -> str:
     return f"""
-You are a senior AI tutor.
-Explain {topic} in simple terms.
-Use bullet points.
-Give a real-world analogy.
+You are a senior AI assistant.
+Answer the user's question clearly and accurately.
+If the topic is technical, explain step by step.
+
+User question:
+{user_message}
 """
