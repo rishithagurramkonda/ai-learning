@@ -1,0 +1,8 @@
+React is a JavaScript library created by Facebook for building user interfaces.
+React uses a component-based architecture.
+FastAPI is a modern Python web framework for building APIs.
+RAG stands for Retrieval Augmented Generation and combines retrieval with LLM generation.
+Groq provides ultra-fast AI inference for large language models.
+Python is a popular programming language used in AI and web development.
+LLMs are large language models trained on massive text datasets.
+Prompt engineering is the process of designing inputs for AI models.
