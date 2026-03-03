@@ -4,6 +4,8 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
 
+conversation_memory = []
+
 # Load env variables
 # load_dotenv()
 load_dotenv(dotenv_path="backend/.env")
@@ -30,25 +32,34 @@ class ChatRequest(BaseModel):
 def root():
     return {"message": "Groq AI Backend Running 🚀"}
 
-
 @app.post("/chat")
 def chat(request: ChatRequest):
     try:
+        # Add user message to memory
+        conversation_memory.append(
+            {"role": "user", "content": request.message}
+        )
+
+        # Keep only last 10 messages (prevents token overflow)
+        messages = [
+            {"role": "system", "content": "You are a helpful AI assistant."}
+        ] + conversation_memory[-10:]
+
         response = client.chat.completions.create(
-            # model="llama3-8b-8192",  # Fast + free
             model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": "You are a helpful AI assistant."},
-                {"role": "user", "content": request.message}
-            ],
+            messages=messages,
             temperature=0.7,
             max_tokens=300
         )
 
         answer = response.choices[0].message.content
 
+        # Add AI response to memory
+        conversation_memory.append(
+            {"role": "assistant", "content": answer}
+        )
+
         return {
-            "question": request.message,
             "answer": answer
         }
 
