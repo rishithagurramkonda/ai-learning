@@ -1,18 +1,7 @@
-import React from "react";
-import AIAssistance from "./components/AIAssistance";
+import AIAssistant from "./components/AIAssistance";
 
 function App() {
-
-  return (
-
-    <div>
-
-      <AIAssistance/>
-
-    </div>
-
-  );
-
+  return <AIAssistant />;
 }
 
 export default App;

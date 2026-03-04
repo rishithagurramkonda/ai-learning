@@ -1,69 +1,160 @@
-body{
-background:#0b0f2a;
-font-family:Arial;
+body {
+    background: #0f172a;
+    font-family: Arial;
 }
 
-.ai-container{
-width:420px;
-margin:auto;
-margin-top:40px;
-background:linear-gradient(145deg,#1a1f4d,#0a0e2f);
-border-radius:20px;
-padding:20px;
-color:white;
-box-shadow:0 0 20px #7b5cff;
+/* Center Layout */
+
+.ai-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.header{
-font-size:20px;
-font-weight:bold;
-margin-bottom:10px;
+/* Main Card */
+
+.ai-card {
+    width: 420px;
+    height: 600px;
+    background: #111827;
+    border-radius: 16px;
+    border: 1px solid #00ffff55;
+    box-shadow: 0 0 25px #00ffff55;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-.title{
-font-size:22px;
-margin-bottom:20px;
+/* Header */
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border-bottom: 1px solid #222;
+    color: white;
 }
 
-.chat-box{
-height:300px;
-overflow-y:auto;
-margin-bottom:15px;
+.ai-avatar {
+    font-size: 28px;
 }
 
-.user-message{
-background:#6c4dff;
-padding:10px;
-border-radius:15px;
-margin:10px;
-text-align:right;
+/* Chat Area */
+
+.chat-area {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
 }
 
-.ai-message{
-background:#1e9fff;
-padding:10px;
-border-radius:15px;
-margin:10px;
-text-align:left;
+/* Messages */
+
+.message {
+    padding: 10px 14px;
+    border-radius: 12px;
+    max-width: 70%;
+    animation: fadeIn 0.3s ease;
 }
 
-.input-area{
-display:flex;
-gap:10px;
+.user {
+    background: #2563eb;
+    color: white;
+    align-self: flex-end;
 }
 
-input{
-flex:1;
-padding:10px;
-border-radius:10px;
-border:none;
+.ai {
+    background: #1f2937;
+    color: white;
+    align-self: flex-start;
 }
 
-button{
-background:#7b5cff;
-color:white;
-border:none;
-padding:10px 15px;
-border-radius:10px;
-cursor:pointer;
+/* Input */
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    gap: 8px;
+    border-top: 1px solid #222;
+}
+
+input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    background: #1f2937;
+    color: white;
+}
+
+/* Buttons */
+
+.send-btn {
+    background: #22c55e;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+.voice-btn {
+    background: #9333ea;
+    border: none;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Typing Animation */
+
+.typing span {
+    width: 6px;
+    height: 6px;
+    margin: 0 2px;
+    background: white;
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 1.4s infinite both;
+}
+
+.typing span:nth-child(2) {
+    animation-delay: .2s;
+}
+
+.typing span:nth-child(3) {
+    animation-delay: .4s;
+}
+
+@keyframes blink {
+    0% {
+        opacity: .2
+    }
+
+    20% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: .2
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0)
+    }
 }

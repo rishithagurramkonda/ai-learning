@@ -1,87 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { askAI } from "../services/aiService";
+import MessageBubble from "./MessageBubble";
+import TypingIndicator from "./TypingIndicator";
 import "./AIAssistance.css";
 
-function AIAssistance() {
+export default function AIAssistant() {
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false);
+    const messagesEndRef = useRef(null);
 
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
-
-  const handleSend = async () => {
-
-    if (!input) return;
-
-    const userMessage = {
-      sender: "user",
-      text: input
+    const scrollBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
-    setMessages([...messages, userMessage]);
+    useEffect(() => {
+        scrollBottom();
+    }, [messages]);
 
-    const aiReply = await askAI(input);
+    const sendMessage = async () => {
+        if (!input.trim()) return;
 
-    const aiMessage = {
-      sender: "ai",
-      text: aiReply
+        const userMsg = { role: "user", text: input };
+
+        setMessages((prev) => [...prev, userMsg]);
+        setInput("");
+        setLoading(true);
+
+        const aiReply = await askAI(input);
+
+        const aiMsg = { role: "ai", text: aiReply };
+
+        setMessages((prev) => [...prev, aiMsg]);
+        setLoading(false);
     };
 
-    setMessages(prev => [...prev, aiMessage]);
+    const startVoice = () => {
+        const recognition =
+            new window.webkitSpeechRecognition() ||
+            new window.SpeechRecognition();
 
-    setInput("");
+        recognition.onresult = (event) => {
+            setInput(event.results[0][0].transcript);
+        };
 
-  };
+        recognition.start();
+    };
 
-  return (
+    return (
+        <div className="ai-wrapper">
 
-    <div className="ai-container">
+            <div className="ai-card">
 
-      <div className="header">
-        SmartAI
-      </div>
+                <div className="ai-header">
+                    <div className="ai-avatar">🤖</div>
+                    <h2>AI Assistant</h2>
+                </div>
 
-      <div className="title">
-        Hello! How can I assist you today?
-      </div>
+                <div className="chat-area">
 
-      <div className="chat-box">
+                    {messages.map((msg, i) => (
+                        <MessageBubble key={i} msg={msg} />
+                    ))}
 
-        {messages.map((msg, index) => (
+                    {loading && <TypingIndicator />}
 
-          <div
-            key={index}
-            className={
-              msg.sender === "user"
-                ? "user-message"
-                : "ai-message"
-            }
-          >
+                    <div ref={messagesEndRef} />
 
-            {msg.text}
+                </div>
 
-          </div>
+                <div className="input-area">
 
-        ))}
+                    <button className="voice-btn" onClick={startVoice}>
+                        🎤
+                    </button>
 
-      </div>
+                    <input
+                        type="text"
+                        placeholder="Ask AI anything..."
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                    />
 
-      <div className="input-area">
+                    <button className="send-btn" onClick={sendMessage}>
+                        Send
+                    </button>
 
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask anything..."
-        />
+                </div>
 
-        <button onClick={handleSend}>
-          Send
-        </button>
+            </div>
 
-      </div>
-
-    </div>
-
-  );
-
+        </div>
+    );
 }
-
-export default AIAssistance;
