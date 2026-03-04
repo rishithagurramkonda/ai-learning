@@ -1,58 +1,87 @@
 import React, { useState } from "react";
-import { sendMessageToAI } from "../services/aiService";
+import { askAI } from "../services/aiService";
+import "./AIAssistance.css";
 
 function AIAssistance() {
 
-  const [message, setMessage] = useState("");
-  const [chat, setChat] = useState([]);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
 
   const handleSend = async () => {
 
-    if (!message) return;
+    if (!input) return;
 
-    const userMsg = { role: "user", text: message };
-    setChat(prev => [...prev, userMsg]);
+    const userMessage = {
+      sender: "user",
+      text: input
+    };
 
-    const userInput = message;
+    setMessages([...messages, userMessage]);
 
-    setMessage("");
+    const aiReply = await askAI(input);
 
-    const answer = await sendMessageToAI(userInput);
+    const aiMessage = {
+      sender: "ai",
+      text: aiReply
+    };
 
-    const botMsg = { role: "bot", text: answer };
+    setMessages(prev => [...prev, aiMessage]);
 
-    setChat(prev => [...prev, botMsg]);
+    setInput("");
+
   };
 
   return (
 
-    <div>
+    <div className="ai-container">
+
+      <div className="header">
+        SmartAI
+      </div>
+
+      <div className="title">
+        Hello! How can I assist you today?
+      </div>
 
       <div className="chat-box">
 
-        {chat.map((msg, index) => (
+        {messages.map((msg, index) => (
 
-          <div key={index} className={msg.role}>
+          <div
+            key={index}
+            className={
+              msg.sender === "user"
+                ? "user-message"
+                : "ai-message"
+            }
+          >
+
             {msg.text}
+
           </div>
 
         ))}
 
       </div>
 
-      <input
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Ask anything..."
-      />
+      <div className="input-area">
 
-      <button onClick={handleSend}>
-        Send
-      </button>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask anything..."
+        />
+
+        <button onClick={handleSend}>
+          Send
+        </button>
+
+      </div>
 
     </div>
 
   );
+
 }
 
 export default AIAssistance;
