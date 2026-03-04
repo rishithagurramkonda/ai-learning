@@ -8,7 +8,10 @@ export default function AIAssistant() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
+    const [isSpeaking, setIsSpeaking] = useState(false);
+
     const messagesEndRef = useRef(null);
+    const speechRef = useRef(null);
 
     const scrollBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -17,6 +20,40 @@ export default function AIAssistant() {
     useEffect(() => {
         scrollBottom();
     }, [messages]);
+
+    // 🎤 START VOICE
+    const speakText = (text) => {
+
+        if (!text) return;
+
+        window.speechSynthesis.cancel();
+
+        const speech = new SpeechSynthesisUtterance(text);
+
+        speech.lang = "en-US";
+        speech.rate = 1;
+        speech.pitch = 1;
+
+        speech.onstart = () => {
+            setIsSpeaking(true);
+        };
+
+        speech.onend = () => {
+            setIsSpeaking(false);
+        };
+
+        speechRef.current = speech;
+
+        window.speechSynthesis.speak(speech);
+    };
+
+    // ⏹ STOP VOICE
+    const stopVoice = () => {
+
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+
+    };
 
     const sendMessage = async () => {
         if (!input.trim()) return;
@@ -38,6 +75,9 @@ export default function AIAssistant() {
 
             setMessages((prev) => [...prev, aiMessage]);
 
+            // 🔊 AI speaks automatically
+            speakText(response);
+
         } catch (err) {
 
             setMessages((prev) => [
@@ -54,6 +94,7 @@ export default function AIAssistant() {
         if (e.key === "Enter") sendMessage();
     };
 
+    // 🎤 USER VOICE INPUT
     const startVoiceInput = () => {
 
         const recognition =
@@ -79,7 +120,7 @@ export default function AIAssistant() {
 
                 <div className="ai-header">
 
-                    <div className={`ai-avatar ${loading ? "avatar-active" : ""}`}>
+                    <div className={`ai-avatar ${isSpeaking ? "avatar-active" : ""}`}>
                         🤖
                     </div>
 
@@ -96,6 +137,19 @@ export default function AIAssistant() {
                     {loading && <TypingIndicator />}
 
                     <div ref={messagesEndRef} />
+
+                </div>
+
+                <div className="voice-wave">
+
+                    {isSpeaking && (
+                        <div className="wave-container">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    )}
 
                 </div>
 
@@ -121,6 +175,13 @@ export default function AIAssistant() {
                         onClick={sendMessage}
                     >
                         ➤
+                    </button>
+
+                    <button
+                        className="stop-btn"
+                        onClick={stopVoice}
+                    >
+                        ⏹
                     </button>
 
                 </div>
