@@ -5,7 +5,12 @@ import TypingIndicator from "./TypingIndicator";
 import "./AIAssistance.css";
 
 export default function AIAssistant() {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState([
+        {
+            role: "ai",
+            text: "Hello 👋 I am Smart AI. How can I help you today?"
+        }
+    ]);
     const [input, setInput] = useState("");
     const [loading, setLoading] = useState(false);
     const [isSpeaking, setIsSpeaking] = useState(false);
@@ -120,11 +125,18 @@ export default function AIAssistant() {
 
                 <div className="ai-header">
 
-                    <div className={`ai-avatar ${isSpeaking ? "avatar-active" : ""}`}>
-                        🤖
-                    </div>
+                    <img
+                        src="/ai-icon.png"
+                        alt="Smart AI"
+                        className={`ai-avatar ${isSpeaking ? "avatar-active" : ""}`}
+                    />
 
-                    <h2>AI Assistant</h2>
+                    <div className="ai-title">
+                        <h2>Smart AI</h2>
+                        <span className="ai-subtitle">
+                            Your Intelligent Assistant
+                        </span>
+                    </div>
 
                 </div>
 
@@ -164,7 +176,7 @@ export default function AIAssistant() {
 
                     <input
                         type="text"
-                        placeholder="Ask anything..."
+                        placeholder="Ask Smart AI anything..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyPress}
