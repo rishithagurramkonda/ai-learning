@@ -27,40 +27,70 @@ export default function AIAssistant() {
         setInput("");
         setLoading(true);
 
-        const aiReply = await askAI(input);
+        try {
 
-        const aiMsg = { role: "ai", text: aiReply };
+            const response = await askAI(input);
 
-        setMessages((prev) => [...prev, aiMsg]);
+            const aiMessage = {
+                role: "ai",
+                text: response
+            };
+
+            setMessages((prev) => [...prev, aiMessage]);
+
+        } catch (err) {
+
+            setMessages((prev) => [
+                ...prev,
+                { role: "ai", text: "Something went wrong." }
+            ]);
+
+        }
+
         setLoading(false);
     };
 
-    const startVoice = () => {
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter") sendMessage();
+    };
+
+    const startVoiceInput = () => {
+
         const recognition =
             new window.webkitSpeechRecognition() ||
             new window.SpeechRecognition();
 
         recognition.onresult = (event) => {
-            setInput(event.results[0][0].transcript);
+
+            const transcript = event.results[0][0].transcript;
+
+            setInput(transcript);
+
         };
 
         recognition.start();
     };
 
     return (
+
         <div className="ai-wrapper">
 
-            <div className="ai-card">
+            <div className="ai-container">
 
                 <div className="ai-header">
-                    <div className="ai-avatar">🤖</div>
+
+                    <div className={`ai-avatar ${loading ? "avatar-active" : ""}`}>
+                        🤖
+                    </div>
+
                     <h2>AI Assistant</h2>
+
                 </div>
 
                 <div className="chat-area">
 
-                    {messages.map((msg, i) => (
-                        <MessageBubble key={i} msg={msg} />
+                    {messages.map((msg, index) => (
+                        <MessageBubble key={index} msg={msg} />
                     ))}
 
                     {loading && <TypingIndicator />}
@@ -71,19 +101,26 @@ export default function AIAssistant() {
 
                 <div className="input-area">
 
-                    <button className="voice-btn" onClick={startVoice}>
+                    <button
+                        className="voice-btn"
+                        onClick={startVoiceInput}
+                    >
                         🎤
                     </button>
 
                     <input
                         type="text"
-                        placeholder="Ask AI anything..."
+                        placeholder="Ask anything..."
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyPress}
                     />
 
-                    <button className="send-btn" onClick={sendMessage}>
-                        Send
+                    <button
+                        className="send-btn"
+                        onClick={sendMessage}
+                    >
+                        ➤
                     </button>
 
                 </div>
